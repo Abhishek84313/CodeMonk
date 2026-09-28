@@ -21,7 +21,7 @@ class CorsPropertiesTest {
 
         CorsProperties properties = Binder.get(environment)
                 .bind("codemonk.cors", Bindable.of(CorsProperties.class))
-                .orElseThrow();
+                .orElseThrow(IllegalStateException::new);
 
         assertEquals(List.of("https://example.com"), properties.getOrigins());
         assertEquals(List.of("GET", "POST"), properties.getMethods());
