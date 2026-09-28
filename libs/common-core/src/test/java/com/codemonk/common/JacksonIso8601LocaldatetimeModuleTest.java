@@ -18,6 +18,6 @@ class JacksonIso8601LocaldatetimeModuleTest {
         String json = JsonConstants.OBJECT_MAPPER.writeValueAsString(value);
 
         assertFalse(JsonConstants.OBJECT_MAPPER.isEnabled(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS));
-        assertEquals(""2026-09-27T12:34:56"", json);
+        assertEquals("\"2026-09-27T12:34:56\"", json);
     }
 }
