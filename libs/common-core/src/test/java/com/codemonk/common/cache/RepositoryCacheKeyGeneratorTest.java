@@ -19,7 +19,7 @@ class RepositoryCacheKeyGeneratorTest {
     @Test
     void shouldBuildARepositoryKeyUnderTheDefaultNamespace() {
         assertEquals(
-                "repository:codemonk/CodeMonk",
+                "repository:codemonk/codemonk",
                 keyGenerator.generate("codemonk", "CodeMonk"));
     }
 
@@ -43,7 +43,7 @@ class RepositoryCacheKeyGeneratorTest {
     @Test
     void shouldHonourACallerChosenNamespace() {
         assertEquals(
-                "repositories:codemonk/CodeMonk",
+                "repositories:codemonk/codemonk",
                 keyGenerator.generate("repositories", "codemonk", "CodeMonk"));
     }
 
