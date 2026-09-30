@@ -4,6 +4,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.context.annotation.Bean;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
@@ -38,6 +39,17 @@ public class TestcontainersConfig {
 
     public static final int REDIS_PORT = 6379;
 
+    public static final DockerImageName KAFKA_IMAGE =
+            DockerImageName.parse("confluentinc/cp-kafka:7.6.0");
+
+    /**
+     * Creates a new, not yet started, Kafka container in KRaft mode.
+     */
+    public static KafkaContainer kafkaContainer() {
+        return new KafkaContainer(KAFKA_IMAGE)
+                .withKraft();
+    }
+
     /**
      * Creates a new, not yet started, Redis Stack container.
      */
@@ -54,5 +66,14 @@ public class TestcontainersConfig {
     @ServiceConnection(name = "redis")
     GenericContainer<?> redisStackContainer() {
         return redisContainer();
+    }
+
+    /**
+     * Exposes the Kafka container to Spring Boot tests through {@code spring.kafka.*}.
+     */
+    @Bean
+    @ServiceConnection(name = "kafka")
+    KafkaContainer kafkaContainerBean() {
+        return kafkaContainer();
     }
 }

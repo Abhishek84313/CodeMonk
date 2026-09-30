@@ -15,6 +15,7 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.KafkaContainer;
 
 /**
  * Checks the container definition without starting Docker.
@@ -48,6 +49,33 @@ class TestcontainersConfigTest {
             assertNotSame(first, second);
             assertFalse(first.isRunning());
         }
+    }
+
+    @Test
+    @DisplayName("Should define the Confluent Kafka image")
+    void shouldUseKafkaImage() {
+        assertEquals("confluentinc/cp-kafka", TestcontainersConfig.KAFKA_IMAGE.getRepository());
+        assertEquals("7.6.0", TestcontainersConfig.KAFKA_IMAGE.getVersionPart());
+    }
+
+    @Test
+    @DisplayName("Should create an unstarted Kafka container")
+    void shouldCreateKafkaContainer() {
+        try (KafkaContainer container = TestcontainersConfig.kafkaContainer()) {
+            assertFalse(container.isRunning());
+        }
+    }
+
+    @Test
+    @DisplayName("Should publish the container as a Kafka service connection bean")
+    void shouldPublishKafkaServiceConnection() throws NoSuchMethodException {
+        Method beanMethod = TestcontainersConfig.class.getDeclaredMethod("kafkaContainerBean");
+        ServiceConnection serviceConnection = AnnotatedElementUtils.findMergedAnnotation(beanMethod, ServiceConnection.class);
+
+        assertNotNull(AnnotatedElementUtils.findMergedAnnotation(beanMethod, Bean.class));
+        assertNotNull(serviceConnection);
+        assertEquals("kafka", serviceConnection.name());
+        assertEquals(KafkaContainer.class, beanMethod.getReturnType());
     }
 
     @Test
